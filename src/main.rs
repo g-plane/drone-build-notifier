@@ -16,12 +16,7 @@ async fn main() -> anyhow::Result<()> {
     let config = config::read_config_file().await?;
 
     let client = Client::new(&config.server, &config.token);
-    let mut last_build = types::Build {
-        number: 0,
-        message: String::new(),
-        author: String::new(),
-        status: types::BuildStatus::Success,
-    };
+    let mut last_build = types::Build::default();
 
     let mut interval = time::interval(time::Duration::from_secs(10));
     loop {

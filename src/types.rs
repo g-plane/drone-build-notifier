@@ -7,7 +7,7 @@ pub struct Repo {
     pub counter: u16,
 }
 
-#[derive(Deserialize, Debug, PartialEq, Eq)]
+#[derive(Deserialize, Debug, PartialEq, Eq, Default)]
 pub struct Build {
     pub number: u16,
     pub status: BuildStatus,
@@ -22,4 +22,10 @@ pub enum BuildStatus {
     Running,
     Success,
     Failure,
+}
+
+impl Default for BuildStatus {
+    fn default() -> Self {
+        Self::Success
+    }
 }

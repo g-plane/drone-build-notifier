@@ -12,5 +12,5 @@ pub struct Config {
 pub async fn read_config_file() -> anyhow::Result<Config> {
     let config_file = fs::read_to_string("config.toml").await?;
 
-    toml::from_str::<Config>(&config_file).map_err(anyhow::Error::from)
+    toml::from_str(&config_file).map_err(anyhow::Error::from)
 }
