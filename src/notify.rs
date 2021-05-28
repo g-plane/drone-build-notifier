@@ -11,7 +11,7 @@ fn resolve_icon_path(file_name: &str) -> anyhow::Result<String> {
     let icon_path = path::Path::new(file_name)
         .canonicalize()?
         .to_str()
-        .ok_or(anyhow::Error::msg("icon path contains invalid characters"))?
+        .ok_or_else(|| anyhow::Error::msg("icon path contains invalid characters"))?
         .replace(path::MAIN_SEPARATOR, "/");
     Ok(format!("file://{}", icon_path))
 }
