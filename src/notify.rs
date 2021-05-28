@@ -16,7 +16,7 @@ fn resolve_icon_path(file_name: &str) -> anyhow::Result<String> {
     Ok(format!("file://{}", icon_path))
 }
 
-pub fn show_notification(build: &Build) -> anyhow::Result<()> {
+pub fn show_notification(build: &Build) -> notify_rust::error::Result<()> {
     let summary = match build.status {
         BuildStatus::Success => "Build Succeeded",
         BuildStatus::Failure => "Build Failed",
@@ -45,7 +45,6 @@ pub fn show_notification(build: &Build) -> anyhow::Result<()> {
         ))
         .icon(&icon)
         .timeout(notify_rust::Timeout::Milliseconds(5000))
-        .show()?;
-
-    Ok(())
+        .show()
+        .map(|_| ())
 }
