@@ -1,0 +1,4 @@
+server = "https://ci.my-drone.io"
+token = "secret token"
+org = "your personal account name or organization name"
+repo = "repository name"
