@@ -7,7 +7,7 @@ mod request;
 mod types;
 
 use request::Client;
-use tokio::time;
+use tokio::{signal, time};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -19,21 +19,28 @@ async fn main() -> anyhow::Result<()> {
     let mut last_build = types::Build::default();
 
     let mut interval = time::interval(time::Duration::from_secs(10));
+
     loop {
-        interval.tick().await;
+        tokio::select! {
+            _ = signal::ctrl_c() => {
+                println!("");
+                break;
+            },
+            _ = interval.tick() => {
+                // fetch repo info again to gain latest build ID
+                let repo = client.fetch_repo(&config.org, &config.repo).await?;
+                let build = client.fetch_latest_build(&repo).await?;
+                debug!("Build status of {} is: {:?}", build.number, build.status);
 
-        // fetch repo info again to gain latest build ID
-        let repo = client.fetch_repo(&config.org, &config.repo).await?;
-        let build = client.fetch_latest_build(&repo).await?;
-        debug!("Build status of {} is: {:?}", build.number, build.status);
-
-        if last_build == build {
-            continue;
-        } else {
-            if build.status != types::BuildStatus::Running {
-                notify::show_notification(&build)?;
+                if last_build != build {
+                    if build.status != types::BuildStatus::Running {
+                        notify::show_notification(&build)?;
+                    }
+                    last_build = build;
+                }
             }
-            last_build = build;
         }
     }
+
+    Ok(())
 }
