@@ -1,5 +1,8 @@
 use serde::Deserialize;
+#[cfg(test)]
+use serde::Serialize;
 
+#[cfg_attr(test, derive(Serialize))]
 #[derive(Deserialize)]
 pub struct Repo {
     pub namespace: String,
@@ -7,6 +10,7 @@ pub struct Repo {
     pub counter: u16,
 }
 
+#[cfg_attr(test, derive(Serialize))]
 #[derive(Deserialize, Debug, PartialEq, Eq, Default)]
 pub struct Build {
     pub number: u16,
@@ -16,6 +20,7 @@ pub struct Build {
     pub author: String,
 }
 
+#[cfg_attr(test, derive(Serialize))]
 #[derive(Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub enum BuildStatus {
@@ -27,5 +32,15 @@ pub enum BuildStatus {
 impl Default for BuildStatus {
     fn default() -> Self {
         Self::Success
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn default_build_status() {
+        assert_eq!(BuildStatus::default(), BuildStatus::Success);
     }
 }
